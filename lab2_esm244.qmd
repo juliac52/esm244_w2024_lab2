@@ -1,0 +1,8 @@
+---
+title: "Lab 2"
+author: "J Cox"
+format: html
+editor: visual
+---
+
+## 

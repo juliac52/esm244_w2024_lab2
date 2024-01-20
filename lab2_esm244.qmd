@@ -24,9 +24,10 @@ library(fable)
 
 # Part 1: Time series with Toolik Lake Data
 
-## Always look at your data 
+## Always look at your data
 
 ### Read in the data
+
 ```{r}
 toolik_df <- read_csv(here('data/toolik_daily.csv'))
 
@@ -43,7 +44,7 @@ ggplot(toolik_ts, aes(x = date, y = daily_air_temp)) +
   theme_bw()
 ```
 
-## Use the filter_index() function to filter by date and time 
+## Use the filter_index() function to filter by date and time
 
 ```{r}
 ### Filter from December 2010 to January 2011, use filter_index() for dates
@@ -55,7 +56,7 @@ toolik_ts %>%
 
 ```
 
-## Use index_by() to aggregate time series by increments 
+## Use index_by() to aggregate time series by increments
 
 ```{r}
 toolik_month <- toolik_ts %>%
@@ -80,8 +81,7 @@ ggplot(toolik_month, aes(x = year(yr_mo), y = monthly_mean_temp)) +
        caption = "<put citation here>")
 ```
 
-
-# Part 2: Time series wrangling and forecasting 
+# Part 2: Time series wrangling and forecasting
 
 ## Energy usage by sector, in trillions of BTUs
 
@@ -89,21 +89,19 @@ ggplot(toolik_month, aes(x = year(yr_mo), y = monthly_mean_temp)) +
 energy_df <- read_csv(here('data','energy.csv'))
 ```
 
-### Analysis goals: 
+### Analysis goals:
 
-* Examine patterns and trends in residential energy consumption over time
-* Predict what residential energy use patterns will look like over the next five years 
+-   Examine patterns and trends in residential energy consumption over time
+-   Predict what residential energy use patterns will look like over the next five years
 
-### Pseudocode 
+### Pseudocode
 
-Visually inspect energy use over time and look for any trends, seasonality, or cycles 
-Could mean energy consumption by year to look for trends across years 
-Could look at how energy consumption changes within a year 
+Visually inspect energy use over time and look for any trends, seasonality, or cycles Could mean energy consumption by year to look for trends across years Could look at how energy consumption changes within a year
 
-* Convert year-month to a date 
-* Filter for only residential 
-* Use a line plot to look at energy consumption over time 
-* Convert to time series use as_tsibble 
+-   Convert year-month to a date
+-   Filter for only residential
+-   Use a line plot to look at energy consumption over time
+-   Convert to time series use as_tsibble
 
 ```{r}
 energy_ts <- energy_df %>%
@@ -113,7 +111,6 @@ energy_ts <- energy_df %>%
 
 ```
 
-
 ```{r}
 ggplot(energy_ts, aes(x = date, y = energy_total, color = sector)) + 
   geom_line() +
@@ -122,12 +119,13 @@ ggplot(energy_ts, aes(x = date, y = energy_total, color = sector)) +
   theme_bw()
 ```
 
-* Residential looks similar to commercial with an upward trend at least for the first part, maybe leveling off or decreasing in recent years 
-* Seasonality - summer and winter peaks, summer peaks seem to be getting larger over time 
+-   Residential looks similar to commercial with an upward trend at least for the first part, maybe leveling off or decreasing in recent years
+-   Seasonality - summer and winter peaks, summer peaks seem to be getting larger over time
 
-### Some more helpful exploratory plots 
+### Some more helpful exploratory plots
 
-#### Season plot - looking at seasonal trends 
+#### Season plot - looking at seasonal trends
+
 ```{r}
 energy_ts %>%
   filter(sector == "residential") %>%
@@ -146,8 +144,9 @@ energy_ts %>%
 ```
 
 ## Decomposition
-* Allow seasonality to shift over time 
-* Think about it like a moving average window 
+
+-   Allow seasonality to shift over time
+-   Think about it like a moving average window
 
 ```{r}
 ### Find the STL decomposition (L = LOESS) weighing recent values more than old ones. Locally estimated scatter plot smoothing 
@@ -162,7 +161,8 @@ components(dcmp) %>%
 
 ```
 
-### Autocorrelation function - how much weight can I give to data far out in time and still have a good prediction 
+### Autocorrelation function - how much weight can I give to data far out in time and still have a good prediction
+
 ```{r}
 energy_ts %>%
   filter(sector == "residential") %>%
@@ -171,9 +171,10 @@ energy_ts %>%
   theme_bw()
 ```
 
-## Forecasting by Hold Winters exponential smoothing 
+## Forecasting by Hold Winters exponential smoothing
 
 Specify for each component, whether non ("N"), additive ("A"), or multiplicative ("M")
+
 ```{r}
 ### Create a model 
 energy_fit <- energy_ts %>%
@@ -202,11 +203,3 @@ ggplot(energy_predicted) +
 ggplot(energy_predicted, aes(x = .resid)) +
   geom_histogram()
 ```
-
-
-
-
-
-
-
-

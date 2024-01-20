@@ -1,0 +1,81 @@
+---
+title: "Lab 2: Post-Lab Practice"
+author: "Julia Cox"
+format: 
+html:
+  code-fold: show
+editor: visual
+    code-fold: show
+    toc: true
+    number-sections: true
+execute:
+  echo: true
+  message: false
+  warning: false
+---
+
+```{r setup}
+library(tidyverse)
+library(here)
+library(tsibble)
+library(feasts)
+library(fable)
+```
+
+
+# Analysis Part 1 
+* Convert the date column to a proper date format, then turn the data frame into a time-series data frame
+
+```{r}
+mauna_df <- read_csv(here('data/co2_mauna_loa.csv'))
+
+mauna_ts <- mauna_df %>% 
+  mutate(date = tsibble::yearmonth(date)) %>% #now it knows this column in dates 
+  as_tsibble(key = NULL, #if we had dates for multiple sites, we want to key by site
+             index = date)
+```
+
+* Create an exploratory season plot and an exploratory subseries plot
+
+```{r}
+ggplot(mauna_ts, aes(x = date, y = co2_mean)) +
+  geom_line() +
+  labs(x = "Date", y = "Mean [CO2]") +
+  theme_bw()
+```
+
+# Analysis 2
+
+* Create an ETS exponential smoothing model, including (if appropriate) seasonality and trend.  Consider whether the trend and seasonality should be considered as additive or multiplicative (you can try different combinations to see how it changes your forecast).
+
+```{r}
+
+```
+
+* Use the ETS model to forecast CO2 levels for the next 20 years, then plot that forecast on the original data using autoplot().
+
+```{r}
+
+```
+
+* Use the ETS model and broom::augment to fit modeled values against the actual observed values.  Plot the two together, and plot a histogram of the residuals.  How well does our model fit our historic observed values?
+
+```{r}
+
+```
+
+*Optional: create an ETS model just trained on data through 2003, and then create a 20-year forecast - and then compare those forecasted values against the observed values from 2004-2023.
+
+```{r}
+
+```
+
+
+# Follow up questions 
+
+* Write a sentence or two describing the trends you see in the exploratory plots.  Describe any seasonality, trend, or cyclicality you observe.
+
+* In your ETS time series model, explain whether an additive or multiplicative model would make more sense, in terms of the relationship between carbon dioxide, humans, and environmental factors.
+
+
+
